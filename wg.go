@@ -1,4 +1,4 @@
-package wg
+package go_utils
 
 import "sync"
 
