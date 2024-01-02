@@ -1,13 +1,14 @@
-package go_utils
+package test
 
 import (
 	"fmt"
+	"github.com/shancang/goutils"
 	"testing"
 	"time"
 )
 
 func TestNewWaitGroup(t *testing.T) {
-	wg := NewWaitGroup(10)
+	wg := goutils.NewWaitGroup(10)
 	for i := 0; i < 10; i++ {
 		wg.Add()
 		go func(i int) {

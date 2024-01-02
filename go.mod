@@ -1,3 +1,3 @@
-module github.com/shancang/go_utils
+module github.com/shancang/goutils
 
 go 1.20
