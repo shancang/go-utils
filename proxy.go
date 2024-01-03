@@ -127,15 +127,18 @@ func InitProxyRouter(configs []*ProxyConfig, router *gin.RouterGroup, middleware
 		b := Backend{
 			config: config,
 		}
-		if b.config.EnableHealth {
-			go b.initHealthCheck()
-		}
+		go b.initHealthCheck()
 		b.initRouter(router, middleware...)
 	}
 }
 
 func (b *Backend) initLoadBalance() {
-	list := b.healthList.get()
+	var list []string
+	if b.config.EnableHealth {
+		list = b.healthList.get()
+	} else {
+		list = b.config.BackendURL
+	}
 	switch b.config.LoadBalanceMod {
 	case roundRobin:
 		b.loadBalance = NewRoundRobin(list)
@@ -158,11 +161,12 @@ func (b *Backend) healthCheck() {
 }
 
 func (b *Backend) initHealthCheck() {
+	if !b.config.EnableHealth {
+		return
+	}
 	ticker := time.NewTicker(time.Duration(b.config.HealthInterval) * time.Second)
 	defer ticker.Stop()
-	if b.config.EnableHealth {
-		b.healthCheck()
-	}
+	b.healthCheck()
 	for {
 		select {
 		case <-ticker.C:
