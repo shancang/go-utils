@@ -23,16 +23,16 @@ type ProxyConfig struct {
 	TargetPath      string            `mapstructure:"target_path" json:"target_path" yaml:"target_path"`                   //目标路径
 	ReWritePath     string            `mapstructure:"re_write_path" json:"re_write_path" yaml:"re_write_path"`             //重写路径
 	LoadBalanceMod  LoadBalanceString `mapstructure:"load_balance_mod" json:"load_balance_mod" yaml:"load_balance_mod"`    //算法
-	healthCheckPath string            `mapstructure:"health_check_path" json:"health_check_path" yaml:"health_check_path"` //健康检查路径
-	healthInterval  int64             `mapstructure:"health_interval" json:"health_interval" yaml:"health_interval"`       //健康检查间隔秒
-	enableHealth    bool              `mapstructure:"enable_health" json:"enable_health" yaml:"enable_health"`             //是否开启健康检查
+	HealthCheckPath string            `mapstructure:"health_check_path" json:"health_check_path" yaml:"health_check_path"` //健康检查路径
+	HealthInterval  int64             `mapstructure:"health_interval" json:"health_interval" yaml:"health_interval"`       //健康检查间隔秒
+	EnableHealth    bool              `mapstructure:"enable_health" json:"enable_health" yaml:"enable_health"`             //是否开启健康检查
 }
 
 type ConfigOptions func(*ProxyConfig)
 
 func WithHealthCheckPath(path string) ConfigOptions {
 	return func(config *ProxyConfig) {
-		config.healthCheckPath = path
+		config.HealthCheckPath = path
 	}
 }
 func WithHealthInterval(interval int64) ConfigOptions {
@@ -40,7 +40,7 @@ func WithHealthInterval(interval int64) ConfigOptions {
 		if interval <= 0 {
 			return
 		}
-		config.healthInterval = interval
+		config.HealthInterval = interval
 	}
 }
 func WithLoadBalanceMod(mod LoadBalanceString) ConfigOptions {
@@ -61,7 +61,7 @@ func WithReWritePath(path string) ConfigOptions {
 }
 func WithHealthCheck(enable bool) ConfigOptions {
 	return func(config *ProxyConfig) {
-		config.enableHealth = enable
+		config.EnableHealth = enable
 	}
 }
 
