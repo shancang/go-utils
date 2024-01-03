@@ -127,7 +127,7 @@ func InitProxyRouter(configs []*ProxyConfig, router *gin.RouterGroup, middleware
 		b := Backend{
 			config: config,
 		}
-		if b.config.enableHealth {
+		if b.config.EnableHealth {
 			go b.initHealthCheck()
 		}
 		b.initRouter(router, middleware...)
