@@ -19,20 +19,20 @@ type LoadBalanceString string
 
 // ProxyConfig 代理配置
 type ProxyConfig struct {
-	BackendURL      []string          //目标地址
-	TargetPath      string            //目标路径
-	ReWritePath     string            //重写路径
-	LoadBalanceMod  LoadBalanceString //算法
-	healthCheckPath string            //健康检查路径
-	healthInterval  int64             //健康检查间隔秒
-	enableHealth    bool              //是否开启健康检查
+	BackendURL      []string          `mapstructure:"backend_url" json:"backend_url" yaml:"backend_url"`                   //目标地址
+	TargetPath      string            `mapstructure:"target_path" json:"target_path" yaml:"target_path"`                   //目标路径
+	ReWritePath     string            `mapstructure:"re_write_path" json:"re_write_path" yaml:"re_write_path"`             //重写路径
+	LoadBalanceMod  LoadBalanceString `mapstructure:"load_balance_mod" json:"load_balance_mod" yaml:"load_balance_mod"`    //算法
+	healthCheckPath string            `mapstructure:"health_check_path" json:"health_check_path" yaml:"health_check_path"` //健康检查路径
+	healthInterval  int64             `mapstructure:"health_interval" json:"health_interval" yaml:"health_interval"`       //健康检查间隔秒
+	enableHealth    bool              `mapstructure:"enable_health" json:"enable_health" yaml:"enable_health"`             //是否开启健康检查
 }
 
 type ConfigOptions func(*ProxyConfig)
 
 func WithHealthCheckPath(path string) ConfigOptions {
 	return func(config *ProxyConfig) {
-		config.TargetPath = path
+		config.healthCheckPath = path
 	}
 }
 func WithHealthInterval(interval int64) ConfigOptions {
@@ -148,7 +148,8 @@ func (b *Backend) healthCheck() {
 	for _, u := range b.config.BackendURL {
 		go func(u string) {
 			active := true
-			if _, err := http.Get(u); err != nil {
+			resp, err := http.Get(u + b.config.healthCheckPath)
+			if err != nil || resp.StatusCode != 200 {
 				active = false
 			}
 			b.healthList.add(u, active)

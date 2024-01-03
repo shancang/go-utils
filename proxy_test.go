@@ -16,6 +16,7 @@ func TestNewProxyRouter(t *testing.T) {
 			"/api",
 			WithHealthInterval(10),
 			WithHealthCheck(true),
+			WithHealthCheckPath("/health"),
 		),
 		NewProxyConfig(
 			[]string{"http://127.0.0.1:8081"},
