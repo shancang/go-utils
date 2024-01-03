@@ -160,7 +160,9 @@ func (b *Backend) healthCheck() {
 func (b *Backend) initHealthCheck() {
 	ticker := time.NewTicker(time.Duration(b.config.HealthInterval) * time.Second)
 	defer ticker.Stop()
-	b.healthCheck()
+	if b.config.EnableHealth {
+		b.healthCheck()
+	}
 	for {
 		select {
 		case <-ticker.C:
