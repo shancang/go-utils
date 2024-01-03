@@ -69,8 +69,8 @@ func NewProxyConfig(BackendURL []string, TargetPath string, options ...ConfigOpt
 	config := &ProxyConfig{
 		BackendURL:      BackendURL,
 		TargetPath:      TargetPath,
-		healthCheckPath: "/health",  //默认健康检查路径
-		healthInterval:  30,         //默认30秒
+		HealthCheckPath: "/health",  //默认健康检查路径
+		HealthInterval:  30,         //默认30秒
 		LoadBalanceMod:  roundRobin, //默认轮询
 	}
 	for _, option := range options {
@@ -148,7 +148,7 @@ func (b *Backend) healthCheck() {
 	for _, u := range b.config.BackendURL {
 		go func(u string) {
 			active := true
-			resp, err := http.Get(u + b.config.healthCheckPath)
+			resp, err := http.Get(u + b.config.HealthCheckPath)
 			if err != nil || resp.StatusCode != 200 {
 				active = false
 			}
@@ -158,7 +158,7 @@ func (b *Backend) healthCheck() {
 }
 
 func (b *Backend) initHealthCheck() {
-	ticker := time.NewTicker(time.Duration(b.config.healthInterval) * time.Second)
+	ticker := time.NewTicker(time.Duration(b.config.HealthInterval) * time.Second)
 	defer ticker.Stop()
 	b.healthCheck()
 	for {
